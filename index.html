@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiteGrade — Free Website Grader for Home Service Businesses</title>
+  <meta name="description" content="Find out if your website is losing you leads. Get a free grade report in 30 seconds.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SiteGrade — Free Website Grader for Home Service Businesses">
+  <meta property="og:description" content="Find out if your website is losing you leads. Get a free grade report in 30 seconds.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sitegrade.pro">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SiteGrade — Free Website Grader for Home Service Businesses">
+  <meta name="twitter:description" content="Find out if your website is losing you leads. Get a free grade report in 30 seconds.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET
+   ============================================================ */
+:root {
+  --color-bg: #0C1B2A;
+  --color-bg-light: #0f2133;
+  --color-gold: #B8956A;
+  --color-teal: #1B6B80;
+  --color-teal-hover: #227f98;
+  --color-white: #ffffff;
+  --color-text: rgba(255, 255, 255, 0.85);
+  --color-text-muted: rgba(255, 255, 255, 0.45);
+  --color-card: rgba(255, 255, 255, 0.03);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-input-bg: rgba(255, 255, 255, 0.05);
+  --color-input-border: rgba(255, 255, 255, 0.12);
+  --color-success: #34d399;
+  --font-primary: 'League Spartan', sans-serif;
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --nav-height: 72px;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  z-index: 1000;
+  background: rgba(12, 27, 42, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.nav__brand-name {
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-white);
+}
+
+.nav__brand-name span {
+  color: var(--color-gold);
+}
+
+.nav__tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--color-text-muted);
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--nav-height) + 64px) 24px 80px;
+  overflow: hidden;
+}
+
+/* Subtle gradient overlay */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 20%, rgba(27, 107, 128, 0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 30% 80%, rgba(184, 149, 106, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grid pattern overlay */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 24px;
+  padding: 8px 20px;
+  border: 1px solid rgba(184, 149, 106, 0.25);
+  border-radius: 100px;
+  background: rgba(184, 149, 106, 0.06);
+}
+
+.hero__headline {
+  font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--color-white);
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+
+.hero__subheadline {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  max-width: 540px;
+  margin: 0 auto 48px;
+}
+
+/* ============================================================
+   SCAN FORM
+   ============================================================ */
+.form-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 28px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 16px 20px;
+  font-family: var(--font-primary);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-white);
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-input-border);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.3s var(--ease-smooth), background 0.3s var(--ease-smooth);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: var(--color-teal);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Custom select arrow */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.form-select {
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+.form-select option {
+  background: #0f2133;
+  color: var(--color-white);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Submit Button */
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 20px 32px;
+  font-family: var(--font-primary);
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-white);
+  background: var(--color-teal);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-smooth), transform 0.2s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+}
+
+.btn-submit:hover {
+  background: var(--color-teal-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(27, 107, 128, 0.35);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.form-note {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-top: 16px;
+  letter-spacing: 0.01em;
+}
+
+.form-proof {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.form-proof strong {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 20px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+.form-error__icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.form-error__text {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ============================================================
+   LOADING STATE
+   ============================================================ */
+#loader-section {
+  display: none;
+}
+
+.loader-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: left;
+}
+
+.loader-card__title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-white);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.loader-card__subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: 36px;
+}
+
+.loader-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.loader-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  opacity: 0.25;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
+}
+
+.loader-step:last-child {
+  border-bottom: none;
+}
+
+.loader-step.active,
+.loader-step.done {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step-indicator {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pulsing dot for active step */
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.3s var(--ease-smooth);
+}
+
+.loader-step.active .step-dot {
+  background: var(--color-teal);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(27, 107, 128, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(27, 107, 128, 0);
+  }
+}
+
+/* Checkmark for completed step */
+.step-check {
+  display: none;
+  width: 28px;
+  height: 28px;
+}
+
+.loader-step.done .step-dot {
+  display: none;
+}
+
+.loader-step.done .step-check {
+  display: block;
+  animation: check-pop 0.4s var(--ease-smooth);
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.step-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.3s var(--ease-smooth);
+}
+
+.loader-step.active .step-label {
+  color: var(--color-white);
+}
+
+.loader-step.done .step-label {
+  color: var(--color-success);
+}
+
+/* Progress bar */
+.loader-progress {
+  margin-top: 32px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.loader-progress__bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-teal), var(--color-gold));
+  border-radius: 100px;
+  transition: width 0.6s var(--ease-smooth);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  margin-top: auto;
+  padding: 40px 24px;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+}
+
+.footer__tagline {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 8px;
+}
+
+.footer__copy {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 640px) {
+  .nav {
+    padding: 0 20px;
+  }
+
+  .nav__tag {
+    display: none;
+  }
+
+  .hero {
+    padding: calc(var(--nav-height) + 40px) 16px 60px;
+  }
+
+  .hero__headline {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+  }
+
+  .hero__subheadline {
+    font-size: 16px;
+    margin-bottom: 36px;
+  }
+
+  .form-card {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .loader-card {
+    padding: 32px 20px;
+  }
+
+  .step-label {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="nav">
+    <div class="nav__brand">
+      <div class="nav__brand-name">Site<span>Grade</span></div>
+      <div class="nav__tag">Free Website Audit</div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__eyebrow">Free Website Audit</div>
+      <h1 class="hero__headline">Is Your Website Losing You Leads?</h1>
+      <p class="hero__subheadline">Get a grade from A+ to F, a list of what's broken, and your estimated wasted ad spend &mdash; in 30 seconds. Free.</p>
+
+      <!-- SCAN FORM -->
+      <div id="form-section">
+        <div class="form-card">
+          <form id="scan-form" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label" for="url">Your Website</label>
+              <input
+                class="form-input"
+                type="text"
+                id="url"
+                name="url"
+                placeholder="e.g. smithplumbing.com"
+                required
+              >
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="business-type">Business Type</label>
+                <div class="select-wrapper">
+                  <select class="form-select" id="business-type" name="businessType" required>
+                    <option value="" disabled selected>Select your trade</option>
+                    <option value="Pool Builder">Pool Builder</option>
+                    <option value="HVAC">HVAC</option>
+                    <option value="Roofing">Roofing</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Landscaping">Landscaping</option>
+                    <option value="Painting">Painting</option>
+                    <option value="General Contractor">General Contractor</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ad-spend">Monthly Ad Spend (Optional)</label>
+                <div class="select-wrapper">
+                  <select class="form-select" id="ad-spend" name="adSpend">
+                    <option value="" disabled selected>Select range</option>
+                    <option value="none">I don't run ads</option>
+                    <option value="under500">Under $500</option>
+                    <option value="500-1000">$500 - $1,000</option>
+                    <option value="1000-2500">$1,000 - $2,500</option>
+                    <option value="2500-5000">$2,500 - $5,000</option>
+                    <option value="5000+">$5,000+</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              Get My Free Grade
+            </button>
+          </form>
+          <p class="form-note">100% free. No signup, no credit card. Results in 30 seconds.</p>
+          <p class="form-note form-proof">Powered by Google PageSpeed Insights &middot; <strong>2,400+</strong> sites graded</p>
+          <div id="form-error" class="form-error" style="display:none;">
+            <span class="form-error__icon">!</span>
+            <span class="form-error__text">We couldn't reach that website. Double-check the URL and try again.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div id="loader-section">
+        <div class="loader-card">
+          <div class="loader-card__title" id="loader-title">Scanning your website...</div>
+          <div class="loader-card__subtitle">This takes about 30 seconds. We're checking real data &mdash; not guessing.</div>
+
+          <div class="loader-steps">
+            <!-- Step 1 -->
+            <div class="loader-step" data-step="0">
+              <div class="step-indicator">
+                <div class="step-dot"></div>
+                <svg class="step-check" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="14" fill="rgba(52,211,153,0.15)"/>
+                  <path d="M9 14.5l3.5 3.5 6.5-7" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="step-label">Checking mobile speed...</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="loader-step" data-step="1">
+              <div class="step-indicator">
+                <div class="step-dot"></div>
+                <svg class="step-check" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="14" fill="rgba(52,211,153,0.15)"/>
+                  <path d="M9 14.5l3.5 3.5 6.5-7" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="step-label">Analyzing your homepage...</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="loader-step" data-step="2">
+              <div class="step-indicator">
+                <div class="step-dot"></div>
+                <svg class="step-check" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="14" fill="rgba(52,211,153,0.15)"/>
+                  <path d="M9 14.5l3.5 3.5 6.5-7" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="step-label">Checking click-to-call...</span>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="loader-step" data-step="3">
+              <div class="step-indicator">
+                <div class="step-dot"></div>
+                <svg class="step-check" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="14" fill="rgba(52,211,153,0.15)"/>
+                  <path d="M9 14.5l3.5 3.5 6.5-7" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="step-label" id="compare-label">Comparing to top-performing businesses...</span>
+            </div>
+          </div>
+
+          <div class="loader-progress">
+            <div class="loader-progress__bar" id="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <p class="footer__tagline">Built for contractors who want more leads.</p>
+    <p class="footer__copy">&copy; 2026 SiteGrade. All rights reserved.</p>
+  </footer>
+
+<script>
+(function() {
+  'use strict';
+
+  const form = document.getElementById('scan-form');
+  const formSection = document.getElementById('form-section');
+  const loaderSection = document.getElementById('loader-section');
+  const progressBar = document.getElementById('progress-bar');
+  const API_URL = 'https://site-grader-api.mikegoewey.workers.dev';
+
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Auto-add https:// to URL input when user leaves field
+  const urlInput = document.getElementById('url');
+  urlInput.addEventListener('blur', function() {
+    let val = this.value.trim();
+    if (val && !val.match(/^https?:\/\//i)) {
+      this.value = 'https://' + val;
+    }
+  });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    let url = document.getElementById('url').value.trim();
+    const businessType = document.getElementById('business-type').value;
+    const adSpend = document.getElementById('ad-spend').value;
+
+    if (!url || !businessType) return;
+
+    // Ensure URL has protocol
+    if (!url.match(/^https?:\/\//i)) {
+      url = 'https://' + url;
+    }
+
+    // Show loader, hide form and any previous error
+    formSection.style.display = 'none';
+    loaderSection.style.display = 'block';
+    document.getElementById('form-error').style.display = 'none';
+
+    // Show their domain in the loader title
+    try {
+      const domain = new URL(url).hostname.replace('www.', '');
+      document.getElementById('loader-title').textContent = 'Grading ' + domain + '...';
+    } catch(_) {}
+
+    // Update the compare step label with the business type
+    const businessLabel = businessType === 'Other' ? 'businesses' : businessType.toLowerCase() + ' websites';
+    document.getElementById('compare-label').textContent =
+      'Comparing to top-performing ' + businessLabel + '...';
+
+    // Reset all steps
+    const steps = document.querySelectorAll('.loader-step');
+    steps.forEach(function(step) {
+      step.classList.remove('active', 'done');
+    });
+    progressBar.style.width = '0%';
+
+    // Start the API call immediately (in parallel with animations)
+    const fetchPromise = fetch(API_URL + '/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: url, businessType: businessType, adSpend: adSpend }),
+    }).then(function(res) {
+      if (!res.ok) throw new Error('Scan failed');
+      return res.json();
+    });
+
+    // Animate steps in sequence
+    const stepDelays = [2800, 2600, 2000, 1800];
+    const totalDuration = stepDelays.reduce(function(a, b) { return a + b; }, 0);
+    let elapsed = 0;
+
+    const animationPromise = (async function() {
+      for (let i = 0; i < steps.length; i++) {
+        steps[i].classList.add('active');
+
+        // Calculate animation delay with slight randomness
+        const stepDelay = stepDelays[i] + (Math.random() * 600 - 300);
+
+        // Animate progress bar incrementally
+        const startElapsed = elapsed;
+        const targetElapsed = elapsed + stepDelays[i];
+        const startProgress = (startElapsed / totalDuration) * 100;
+        const targetProgress = (targetElapsed / totalDuration) * 100;
+
+        // Smooth progress bar update
+        progressBar.style.width = targetProgress + '%';
+
+        await delay(stepDelay);
+
+        steps[i].classList.remove('active');
+        steps[i].classList.add('done');
+        elapsed += stepDelays[i];
+      }
+
+      progressBar.style.width = '100%';
+    })();
+
+    try {
+      // Wait for BOTH the API call and the animations to complete
+      const [data] = await Promise.all([fetchPromise, animationPromise]);
+
+      // Small pause after everything completes for UX feel
+      await delay(400);
+
+      // Redirect to report page
+      window.location.href = 'report.html?id=' + data.id;
+    } catch (err) {
+      // Wait for animations to finish even if API failed, for a cleaner UX
+      try { await animationPromise; } catch(_) {}
+
+      // Show form again with inline error
+      formSection.style.display = 'block';
+      loaderSection.style.display = 'none';
+      document.getElementById('form-error').style.display = 'flex';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
