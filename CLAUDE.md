@@ -6,7 +6,7 @@ Free website grader for home service businesses. Scores sites on how well they c
 - **Backend:** Cloudflare Worker (TypeScript) at `worker/`
 - **Storage:** Cloudflare KV (reports with 30-day TTL)
 - **APIs:** Google PageSpeed Insights v5, Resend (lead emails)
-- **Design:** Light SaaS aesthetic (#F8FAFC bg, #0369A1 primary blue, #0F172A text), Poppins + Open Sans fonts, glassmorphism cards
+- **Design:** Warm light aesthetic (#FAFAF9 bg, #F97316 orange primary, #18181B text), Outfit + Inter fonts, animated liquid hero bg
 
 ## How It Works
 
@@ -89,7 +89,7 @@ KV namespace `REPORTS` is bound in `wrangler.toml`.
 - Finding weights: high=30, medium=20, low=10. Category score = earned/total * 100
 - Overall score = weighted sum of 6 categories (weights in `scoring.ts`)
 - Grade thresholds: A+ (97+) → F (below 60)
-- Grade colors: A=green #16A34A, B=blue #0369A1, C=yellow #CA8A04, D=orange #EA580C, F=red #DC2626
+- Grade colors: A=green #16A34A, B=blue #2563EB, C=yellow #CA8A04, D=orange #EA580C, F=red #DC2626
 - Wasted spend: `(100 - score) / 100 * 0.7 * monthlyAdSpend`, shown as low-high range
 
 ## Tone
@@ -98,16 +98,19 @@ Professional with personality. Stats are precise, verdicts are conversational an
 
 ## Design System
 
-Light mode SaaS aesthetic. Premium but approachable for blue-collar business owners.
+Warm, confident, modern. Premium tool feel but approachable for blue-collar business owners.
 
-- **Background:** #F8FAFC (slate-50)
-- **Primary:** #0369A1 (sky-700), hover #0284C7
-- **Text:** #0F172A (slate-900), secondary #475569, muted #94A3B8
-- **Cards:** rgba(255,255,255,0.8) with backdrop-blur(12px), border #E2E8F0
-- **Fonts:** Poppins (headings, 500-900), Open Sans (body, 400-700)
-- **Shadows:** sm/md/lg scale using rgba(15,23,42,0.06-0.10)
-- **Transitions:** 200ms ease for interactions, cubic-bezier(0.16,1,0.3,1) for smooth animations
-- **Nav:** Fixed, glass blur, 72px height
+- **Background:** #FAFAF9 (stone-50, warm off-white)
+- **Primary:** #F97316 (orange-500), hover #EA580C, light rgba(249,115,22,0.08)
+- **Accent:** #6366F1 (indigo-500, secondary visual interest)
+- **Text:** #18181B (zinc-900), secondary #52525B, muted #A1A1AA
+- **Cards:** #FFFFFF solid white, border #E4E4E7
+- **Fonts:** Outfit (headings, 400-800), Inter (body, 400-700)
+- **Shadows:** warm zinc-based: sm/md/lg scale using rgba(24,24,27,0.04-0.12)
+- **Buttons:** Gradient `linear-gradient(135deg, #F97316, #EA580C)`, 12px radius
+- **Hero:** Animated liquid background with 4 floating gradient blobs (blur 80px, saturate 1.4)
+- **Nav:** Fixed, warm glass blur, 72px height
+- **Motion:** prefers-reduced-motion respected
 
 ## v1 Scope — What's OUT
 
