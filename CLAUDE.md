@@ -6,7 +6,7 @@ Free website grader for home service businesses. Scores sites on how well they c
 - **Backend:** Cloudflare Worker (TypeScript) at `worker/`
 - **Storage:** Cloudflare KV (reports with 30-day TTL)
 - **APIs:** Google PageSpeed Insights v5, Resend (lead emails)
-- **Design:** Warm light aesthetic (#FAFAF9 bg, #F97316 orange primary, #18181B text), Outfit + Inter fonts, animated liquid hero bg
+- **Design:** Dark SaaS aesthetic (#0B0F1A bg, #3B82F6 blue primary, #F97316 orange accent), Outfit + Inter fonts, ambient glow orbs, glassmorphism cards
 
 ## How It Works
 
@@ -89,7 +89,7 @@ KV namespace `REPORTS` is bound in `wrangler.toml`.
 - Finding weights: high=30, medium=20, low=10. Category score = earned/total * 100
 - Overall score = weighted sum of 6 categories (weights in `scoring.ts`)
 - Grade thresholds: A+ (97+) → F (below 60)
-- Grade colors: A=green #16A34A, B=blue #2563EB, C=yellow #CA8A04, D=orange #EA580C, F=red #DC2626
+- Grade colors: A=green #22C55E, B=blue #3B82F6, C=yellow #EAB308, D=orange #F97316, F=red #EF4444
 - Wasted spend: `(100 - score) / 100 * 0.7 * monthlyAdSpend`, shown as low-high range
 
 ## Tone
@@ -98,19 +98,23 @@ Professional with personality. Stats are precise, verdicts are conversational an
 
 ## Design System
 
-Warm, confident, modern. Premium tool feel but approachable for blue-collar business owners.
+Dark premium SaaS aesthetic (Vercel/Linear-inspired). Feels like a pro developer tool but approachable for blue-collar business owners.
 
-- **Background:** #FAFAF9 (stone-50, warm off-white)
-- **Primary:** #F97316 (orange-500), hover #EA580C, light rgba(249,115,22,0.08)
-- **Accent:** #6366F1 (indigo-500, secondary visual interest)
-- **Text:** #18181B (zinc-900), secondary #52525B, muted #A1A1AA
-- **Cards:** #FFFFFF solid white, border #E4E4E7
+- **Background:** #0B0F1A (deep navy-black)
+- **Surface:** rgba(30, 41, 59, 0.4) (glass cards), solid #131B2E
+- **Border:** rgba(148, 163, 184, 0.1), hover 0.2
+- **Primary:** #3B82F6 (blue-500), hover #2563EB — used for CTAs and links
+- **Accent:** #F97316 (orange-500) — used for brand gradient text, money callouts
+- **Accent Purple:** #8B5CF6 (violet-500) — used in brand gradient and glow orbs
+- **Text:** #F1F5F9 (headings), #CBD5E1 (body), #94A3B8 (muted), #64748B (dim)
+- **Cards:** Glassmorphism — semi-transparent bg, backdrop-filter blur(16px), subtle border
 - **Fonts:** Outfit (headings, 400-800), Inter (body, 400-700)
-- **Shadows:** warm zinc-based: sm/md/lg scale using rgba(24,24,27,0.04-0.12)
-- **Buttons:** Gradient `linear-gradient(135deg, #F97316, #EA580C)`, 12px radius
-- **Hero:** Animated liquid background with 4 floating gradient blobs (blur 80px, saturate 1.4)
-- **Nav:** Fixed, warm glass blur, 72px height
-- **Motion:** prefers-reduced-motion respected
+- **Buttons:** Blue `linear-gradient(135deg, #3B82F6, #2563EB)`, 12px radius
+- **Hero:** 3 ambient glow orbs (blue #3B82F6, orange #F97316, purple #8B5CF6) with `glow-drift` keyframe animation, blur 120-160px, opacity 0.15-0.2
+- **Brand text:** Gradient `linear-gradient(135deg, #F97316, #F59E0B, #8B5CF6)` with `background-clip: text`
+- **Nav:** Fixed, glass blur (rgba(11,15,26,0.8) + blur 16px), 64px height
+- **Inputs:** rgba(30,41,59,0.6) bg, rgba(148,163,184,0.15) border
+- **Motion:** prefers-reduced-motion respected, glow animations pause
 
 ## v1 Scope — What's OUT
 
