@@ -3,9 +3,6 @@ main = "src/index.ts"
 compatibility_date = "2024-06-20"
 account_id = "4bfcd1f1d7b134579054be3dffbec056"
 
-[vars]
-PAGESPEED_API_KEY = ""
-
 [[kv_namespaces]]
 binding = "REPORTS"
 id = "d0debde20a5e48edabc366e97d188c20"
