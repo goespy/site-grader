@@ -19,8 +19,8 @@ export function analyzeMobile(page: ParsedPage, speed: PageSpeedResult | null): 
       label: 'Mobile load time',
       pass: speed.lcpMs < 3000,
       detail: speed.lcpMs < 3000
-        ? `Your site loads in ${loadSec}s on a phone. That's solid — most visitors stick around when it loads under 3 seconds.`
-        : `Your site takes ${loadSec}s to load on a phone. The industry standard is under 3s. 53% of visitors leave after 3 seconds.`,
+        ? `Your site loads in ${loadSec}s on a standard mobile connection. That's solid — most visitors stick around when it loads under 3 seconds.`
+        : `Your site takes ${loadSec}s to fully load on a standard mobile connection — that's what your customers on spotty cell service or older phones experience. The industry threshold is under 3s. It may feel fast on your WiFi, but over half your ad traffic won't wait that long.`,
       impact: 'high',
     });
 
