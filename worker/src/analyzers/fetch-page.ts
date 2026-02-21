@@ -208,7 +208,7 @@ export async function fetchAndParse(url: string): Promise<ParsedPage> {
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/<script[\s\S]*?<\/script>/gi, '');
   const bodyText = stripTags(bodyNoStyleScript).replace(/\s+/g, ' ').trim();
-  const aboveFoldText = bodyText.slice(0, 1500);
+  const aboveFoldText = bodyText.slice(0, 5000);
   const hasCtaAboveFold = CTA_RE.test(aboveFoldText);
 
   // Navigation links
