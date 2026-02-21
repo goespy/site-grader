@@ -196,7 +196,9 @@ export async function fetchAndParse(url: string): Promise<ParsedPage> {
   // CTA detection
   const textContent = stripTags(html);
   const ctaCount = countMatches(textContent, new RegExp(CTA_RE.source, 'gi'));
-  const aboveFoldText = stripTags(html.slice(0, 2000));
+  const bodyStart = html.search(/<body[\s>]/i);
+  const bodyHtml = bodyStart >= 0 ? html.slice(bodyStart) : html;
+  const aboveFoldText = stripTags(bodyHtml.slice(0, 3000));
   const hasCtaAboveFold = CTA_RE.test(aboveFoldText);
 
   // Navigation links
