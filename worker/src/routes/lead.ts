@@ -1,4 +1,5 @@
 import type { Env } from '../index';
+import { recordLead } from '../analytics';
 
 /* ------------------------------------------------------------------ */
 /*  HTML escape helper to prevent XSS in email content                */
@@ -36,7 +37,7 @@ interface StoredReport {
 /*  Route handler                                                     */
 /* ------------------------------------------------------------------ */
 
-export async function handleLead(request: Request, env: Env): Promise<Response> {
+export async function handleLead(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   // 1. Parse JSON body
   const body = (await request.json()) as LeadRequest;
   const { name, email, phone, reportId } = body;
@@ -117,6 +118,11 @@ export async function handleLead(request: Request, env: Env): Promise<Response> 
     console.error('Failed to send lead notification email:', err);
   }
 
-  // 6. Return success regardless of email outcome
+  // 6. Record analytics (non-blocking)
+  if (report) {
+    ctx.waitUntil(recordLead(env, report.businessType, report.overallGrade));
+  }
+
+  // 7. Return success regardless of email outcome
   return Response.json({ success: true });
 }

@@ -9,8 +9,9 @@ import { analyzeSeo } from '../analyzers/seo';
 import { analyzeAdReadiness } from '../analyzers/ad-readiness';
 import { gradeReport } from '../scoring';
 import { overallVerdict, wastedSpendVerdict } from '../verdicts';
+import { recordScan } from '../analytics';
 
-export async function handleScan(request: Request, env: Env): Promise<Response> {
+export async function handleScan(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   try {
     // 1. Parse JSON body
     const body = (await request.json()) as {
@@ -82,7 +83,10 @@ export async function handleScan(request: Request, env: Env): Promise<Response> 
       { expirationTtl: 30 * 24 * 60 * 60 },
     );
 
-    // 10. Return the report
+    // 10. Record analytics (non-blocking)
+    ctx.waitUntil(recordScan(env, businessType, graded.overallGrade, adSpend ?? null));
+
+    // 11. Return the report
     return Response.json(storedReport);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
