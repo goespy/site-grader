@@ -64,7 +64,7 @@ const CTA_RE =
   /\b(call|contact|quote|estimate|free|schedule|book|get started|request|consultation)\b/i;
 
 const TRUST_RE =
-  /\b(testimonial|review|customer said|what our|clients say|rated|stars?)\b/i;
+  /\b(testimonials?|reviews?|customer said|what our|clients say|rated|stars?|hear from|feedback)\b/i;
 
 const LICENSE_RE =
   /\b(licen[sc]ed|insured|bonded|certified|accredited)\b/i;
@@ -200,9 +200,15 @@ export async function fetchAndParse(url: string): Promise<ParsedPage> {
   // CTA detection
   const textContent = stripTags(html);
   const ctaCount = countMatches(textContent, new RegExp(CTA_RE.source, 'gi'));
+  // Strip tags from body first, THEN slice — bloated HTML (GoDaddy, Wix) has
+  // thousands of chars of CSS classes before any visible text.
   const bodyStart = html.search(/<body[\s>]/i);
   const bodyHtml = bodyStart >= 0 ? html.slice(bodyStart) : html;
-  const aboveFoldText = stripTags(bodyHtml.slice(0, 3000));
+  const bodyNoStyleScript = bodyHtml
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '');
+  const bodyText = stripTags(bodyNoStyleScript).replace(/\s+/g, ' ').trim();
+  const aboveFoldText = bodyText.slice(0, 1500);
   const hasCtaAboveFold = CTA_RE.test(aboveFoldText);
 
   // Navigation links
