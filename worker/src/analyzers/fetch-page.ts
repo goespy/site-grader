@@ -42,6 +42,10 @@ export interface ParsedPage {
   hasRealPhotos: boolean;
   imageCount: number;
 
+  // Mobile signals from HTML (fallback when PageSpeed can't render)
+  hasViewportMeta: boolean;
+  hasResponsiveCSS: boolean;
+
   // Schema / local SEO
   hasSchema: boolean;
   hasLocalSchema: boolean;
@@ -233,6 +237,13 @@ export async function fetchAndParse(url: string): Promise<ParsedPage> {
   const mentionsLocation = LOCATION_RE.test(textContent);
   const mentionsService = SERVICE_RE.test(textContent);
 
+  // --- Mobile signals from HTML (fallback for slow-rendering pages) ---------
+
+  const hasViewportMeta =
+    /name=["']viewport["']/i.test(html);
+  const hasResponsiveCSS =
+    /@media[^{]*max-width/i.test(html) || /@media[^{]*min-width/i.test(html);
+
   return {
     html,
     url,
@@ -257,6 +268,8 @@ export async function fetchAndParse(url: string): Promise<ParsedPage> {
     hasAboutPage,
     hasRealPhotos,
     imageCount,
+    hasViewportMeta,
+    hasResponsiveCSS,
     hasSchema,
     hasLocalSchema,
     mentionsLocation,
