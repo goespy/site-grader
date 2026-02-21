@@ -47,7 +47,8 @@ site-grader/
 │   │   ├── routes/
 │   │   │   ├── scan.ts     # POST /api/scan — orchestrate analysis
 │   │   │   ├── report.ts   # GET /api/report/:id — fetch stored report
-│   │   │   └── lead.ts     # POST /api/lead — capture + email via Resend
+│   │   │   ├── lead.ts     # POST /api/lead — capture + email via Resend
+│   │   │   └── stats.ts    # GET /api/stats — analytics dashboard (auth required)
 │   │   ├── analyzers/
 │   │   │   ├── types.ts         # Finding + CategoryResult interfaces
 │   │   │   ├── fetch-page.ts    # Fetch URL HTML, regex-parse for signals
@@ -58,6 +59,7 @@ site-grader/
 │   │   │   ├── speed.ts         # Page speed scoring
 │   │   │   ├── seo.ts           # SEO basics scoring
 │   │   │   └── ad-readiness.ts  # Ad landing readiness scoring
+│   │   ├── analytics.ts    # KV-based aggregate counters (scans, leads)
 │   │   ├── scoring.ts      # Category weights, letter grades, wasted spend
 │   │   └── verdicts.ts     # Plain English verdict templates
 │   ├── wrangler.toml
@@ -72,6 +74,7 @@ site-grader/
 | POST | `/api/scan` | Run full site analysis. Body: `{ url, businessType, adSpend? }` |
 | GET | `/api/report/:id` | Fetch stored report by ID |
 | POST | `/api/lead` | Capture consultation request. Body: `{ name, email, phone?, reportId }` |
+| GET | `/api/stats` | Analytics dashboard. Header: `Authorization: Bearer <STATS_TOKEN>` |
 
 ## Environment Variables (Worker)
 
@@ -80,6 +83,7 @@ site-grader/
 | `PAGESPEED_API_KEY` | Google PageSpeed API key (optional, raises quota) |
 | `RESEND_API_KEY` | Resend API key for lead notification emails |
 | `LEAD_EMAIL_TO` | Email address that receives lead notifications |
+| `STATS_TOKEN` | Bearer token for `/api/stats` endpoint |
 
 KV namespace `REPORTS` is bound in `wrangler.toml`.
 
@@ -131,7 +135,7 @@ Dark premium SaaS aesthetic (Vercel/Linear-inspired). Feels like a pro developer
 
 1. Create KV namespace: `cd worker && npx wrangler kv:namespace create REPORTS`
 2. Add KV IDs to `wrangler.toml`
-3. Set secrets: `npx wrangler secret put PAGESPEED_API_KEY` (+ RESEND_API_KEY, LEAD_EMAIL_TO)
+3. Set secrets: `npx wrangler secret put PAGESPEED_API_KEY` (+ RESEND_API_KEY, LEAD_EMAIL_TO, STATS_TOKEN)
 4. Add production domain to ALLOWED_ORIGINS in `worker/src/index.ts`
 5. Deploy worker: `cd worker && npm run deploy`
 6. Update `API_URL` in `index.html` and `report.html` to production worker URL
