@@ -46,17 +46,16 @@ export async function handleScan(request: Request, env: Env): Promise<Response> 
     ];
 
     // 5. Grade the report
-    const graded = gradeReport(categories, adSpend ?? null);
+    const graded = gradeReport(categories, adSpend ?? null, businessType);
 
     // 6. Generate report ID
     const reportId = crypto.randomUUID().slice(0, 12);
 
     // 7. Build the verdict strings
     const verdict = overallVerdict(graded.overallGrade);
-    const wastedVerdict =
-      graded.wastedSpend && adSpend
-        ? wastedSpendVerdict(graded.wastedSpend.low, graded.wastedSpend.high, adSpend)
-        : null;
+    const wastedVerdict = graded.wastedSpend
+      ? wastedSpendVerdict(graded.wastedSpend, businessType)
+      : null;
 
     // 8. Build stored report object
     const storedReport = {

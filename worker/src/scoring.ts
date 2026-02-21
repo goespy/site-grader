@@ -24,7 +24,7 @@ export interface GradedReport {
   overallGrade: string;
   categories: GradedCategory[];
   priorityFixes: PriorityFix[];
-  wastedSpend: { low: number; high: number } | null;
+  wastedSpend: WastedSpend | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -89,21 +89,60 @@ const SPEND_MIDPOINTS: Record<string, number> = {
   '$5,000+':         6500,
 };
 
+/**
+ * Industry-average monthly ad spend by trade.
+ * Sources: LocaliQ 2025 Search Ad Benchmarks (3,211 campaigns),
+ * HookAgency HVAC Marketing Budget Guide (2025).
+ */
+const INDUSTRY_AD_SPEND: Record<string, number> = {
+  'Pool Builder':        1500,  // LocaliQ: Pools & Spas $45 CPL × ~33 leads/mo
+  'HVAC':                2600,  // HookAgency: 40 leads × $65 CPL
+  'Roofing':             1800,  // HookAgency: 20 leads × $80 CPL; LocaliQ: $228 CPL
+  'Plumbing':            2750,  // HookAgency: 50 leads × $55 CPL
+  'Electrical':          2000,  // LocaliQ: $12.18 avg CPC, ~$100 CPL
+  'Landscaping':         1500,  // LocaliQ: mid-range CPL
+  'Painting':            1200,  // LocaliQ: Paint & Painting $13.74 CPC
+  'General Contractor':  2500,  // LocaliQ: $165.67 CPL, ~15 leads/mo
+  'Other':               2000,  // Industry midpoint
+};
+
+export interface WastedSpend {
+  low: number;
+  high: number;
+  monthlySpend: number;
+  isEstimated: boolean;
+}
+
 function estimateWaste(
   score: number,
   adSpend: string | null,
-): { low: number; high: number } | null {
-  if (!adSpend) return null;
+  businessType: string,
+): WastedSpend | null {
+  let monthlySpend: number;
+  let isEstimated: boolean;
 
-  const midpoint = SPEND_MIDPOINTS[adSpend];
-  if (midpoint === undefined) return null;
+  if (adSpend && adSpend !== 'none') {
+    const midpoint = SPEND_MIDPOINTS[adSpend];
+    if (midpoint === undefined) return null;
+    monthlySpend = midpoint;
+    isEstimated = false;
+  } else if (adSpend === 'none') {
+    // User explicitly said they don't run ads — skip waste calc
+    return null;
+  } else {
+    // No ad spend provided — use industry average for their trade
+    monthlySpend = INDUSTRY_AD_SPEND[businessType] ?? INDUSTRY_AD_SPEND['Other'];
+    isEstimated = true;
+  }
 
   const wasteFactor = ((100 - score) / 100) * 0.7;
-  const midWaste = midpoint * wasteFactor;
+  const midWaste = monthlySpend * wasteFactor;
 
   return {
     low:  Math.round(midWaste * 0.8),
     high: Math.round(midWaste * 1.2),
+    monthlySpend,
+    isEstimated,
   };
 }
 
@@ -154,6 +193,7 @@ function collectPriorityFixes(categories: CategoryResult[]): PriorityFix[] {
 export function gradeReport(
   categories: CategoryResult[],
   adSpend: string | null,
+  businessType: string,
 ): GradedReport {
   /* Weighted overall score */
   let weightedSum = 0;
@@ -185,6 +225,6 @@ export function gradeReport(
     overallGrade,
     categories:   gradedCategories,
     priorityFixes: collectPriorityFixes(categories),
-    wastedSpend:  estimateWaste(overallScore, adSpend),
+    wastedSpend:  estimateWaste(overallScore, adSpend, businessType),
   };
 }

@@ -19,12 +19,25 @@ export function overallVerdict(grade: string): string {
 }
 
 export function wastedSpendVerdict(
-  low: number,
-  high: number,
-  adSpend: string,
+  spend: { low: number; high: number; monthlySpend: number; isEstimated: boolean },
+  businessType: string,
 ): string {
+  const low = spend.low.toLocaleString();
+  const high = spend.high.toLocaleString();
+  const monthly = spend.monthlySpend.toLocaleString();
+
+  if (spend.isEstimated) {
+    return (
+      `The average ${businessType.toLowerCase()} business spends ~$${monthly}/mo on ads ` +
+      `(LocaliQ, 2025). Based on your site's score, we estimate ` +
+      `$${low}–$${high}/mo is lost to visitors who leave before converting. ` +
+      `Google data shows 53% of mobile visitors abandon sites that take over 3 seconds to load.`
+    );
+  }
+
   return (
-    `You're spending ${adSpend}/mo on ads. Based on your site's performance, ` +
-    `we estimate $${low}-$${high}/mo is wasted on visitors who leave before converting.`
+    `At $${monthly}/mo in ad spend, we estimate $${low}–$${high}/mo ` +
+    `is wasted on visitors who leave before converting. ` +
+    `Google data shows 53% of mobile visitors abandon sites that take over 3 seconds to load.`
   );
 }
