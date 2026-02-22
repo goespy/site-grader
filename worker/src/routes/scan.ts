@@ -7,6 +7,8 @@ import { analyzeTrust } from '../analyzers/trust';
 import { analyzeSpeed } from '../analyzers/speed';
 import { analyzeSeo } from '../analyzers/seo';
 import { analyzeAdReadiness } from '../analyzers/ad-readiness';
+import { runAiReview } from '../analyzers/ai-review';
+import { findCompetitors } from '../analyzers/competitors';
 import { gradeReport } from '../scoring';
 import { overallVerdict, wastedSpendVerdict } from '../verdicts';
 import { recordScan } from '../analytics';
@@ -36,7 +38,11 @@ export async function handleScan(request: Request, env: Env, ctx: ExecutionConte
       runPageSpeed(url, env.PAGESPEED_API_KEY),
     ]);
 
-    // 4. Run all 6 analyzers (PageSpeed may be null if API unavailable)
+    // 4. Start AI review + competitor search (async) while regex analyzers run (sync)
+    const aiReviewPromise = runAiReview(page, businessType, adSpend ?? null, env);
+    const competitorsPromise = findCompetitors(page, businessType, env);
+
+    // 5. Run all 6 regex-based analyzers
     const categories = [
       analyzeMobile(page, pageSpeed),
       analyzeLeadCapture(page),
@@ -46,19 +52,25 @@ export async function handleScan(request: Request, env: Env, ctx: ExecutionConte
       analyzeAdReadiness(page, pageSpeed, businessType),
     ];
 
-    // 5. Grade the report
+    // 6. Await AI review and competitors
+    const [aiResult, competitorData] = await Promise.all([aiReviewPromise, competitorsPromise]);
+    if (aiResult) {
+      categories.push(aiResult);
+    }
+
+    // 7. Grade the report
     const graded = gradeReport(categories, adSpend ?? null, businessType);
 
-    // 6. Generate report ID
+    // 8. Generate report ID
     const reportId = crypto.randomUUID().slice(0, 12);
 
-    // 7. Build the verdict strings
+    // 9. Build the verdict strings
     const verdict = overallVerdict(graded.overallGrade);
     const wastedVerdict = graded.wastedSpend
       ? wastedSpendVerdict(graded.wastedSpend, businessType)
       : null;
 
-    // 8. Build stored report object
+    // 10. Build stored report object
     const storedReport = {
       id: reportId,
       url,
@@ -74,19 +86,20 @@ export async function handleScan(request: Request, env: Env, ctx: ExecutionConte
       categories: graded.categories,
       priorityFixes: graded.priorityFixes.slice(0, 5),
       pageTitle: page.title,
+      competitors: competitorData,
     };
 
-    // 9. Store in KV with 30-day TTL
+    // 11. Store in KV with 30-day TTL
     await env.REPORTS.put(
       'report:' + reportId,
       JSON.stringify(storedReport),
       { expirationTtl: 30 * 24 * 60 * 60 },
     );
 
-    // 10. Record analytics (non-blocking)
+    // 12. Record analytics (non-blocking)
     ctx.waitUntil(recordScan(env, businessType, graded.overallGrade, adSpend ?? null));
 
-    // 11. Return the report
+    // 13. Return the report
     return Response.json(storedReport);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

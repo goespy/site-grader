@@ -390,6 +390,71 @@ a { text-decoration: none; color: inherit; }
 .finding-label { font-weight: 600; color: var(--color-text); }
 .finding-detail { color: var(--color-text-dim); }
 
+/* ---- COMPETITORS ---- */
+.competitors-section { margin-bottom: 48px; }
+
+.competitors-heading-row { margin-bottom: 16px; }
+
+.competitors-label {
+  font-family: var(--font-heading);
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-dim);
+  margin-bottom: 4px;
+}
+
+.competitors-sublabel {
+  font-size: 13px;
+  color: var(--color-text-dim);
+}
+
+.competitors-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.competitor-card {
+  flex: 1 1 0;
+  min-width: 140px;
+  max-width: 200px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.2s;
+  text-decoration: none;
+  display: block;
+}
+
+.competitor-card:hover { border-color: var(--color-border-hover); }
+
+.competitor-name {
+  font-family: var(--font-heading);
+  font-size: 13px; font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.competitor-rating {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.competitor-star { color: #EAB308; }
+
+.competitor-reviews {
+  font-size: 12px;
+  color: var(--color-text-dim);
+  font-weight: 400;
+}
+
 /* ---- PRIORITY FIXES ---- */
 .priority-fixes { margin-bottom: 48px; }
 
@@ -656,6 +721,7 @@ a { text-decoration: none; color: inherit; }
   .lead-heading { font-size: 24px; }
   .priority-title { font-size: 22px; }
   .fix-item { padding: 14px 16px; }
+  .competitor-card { min-width: 120px; }
 }
 
 @media (max-width: 480px) {
@@ -711,6 +777,14 @@ a { text-decoration: none; color: inherit; }
 
   <div class="categories-heading">Category Breakdown</div>
   <div class="categories-grid" id="categoriesGrid"></div>
+
+  <div class="competitors-section" id="competitorsSection" style="display:none;">
+    <div class="competitors-heading-row">
+      <div class="competitors-label">Your Competition</div>
+      <div class="competitors-sublabel" id="competitorsSublabel"></div>
+    </div>
+    <div class="competitors-row" id="competitorsRow"></div>
+  </div>
 
   <div class="priority-fixes" id="priorityFixes">
     <div class="priority-heading">Recommendations</div>
@@ -823,6 +897,23 @@ a { text-decoration: none; color: inherit; }
         var t=e.target.closest('.category-toggle'); if(!t) return;
         var f=document.getElementById('findings-'+t.getAttribute('data-cat'));
         if(f){ var o=f.classList.contains('open'); f.classList.toggle('open'); t.classList.toggle('open'); t.childNodes[0].textContent=o?'Show details ':'Hide details '; }
+      });
+    }
+
+    // Competitors section
+    if (report.competitors && report.competitors.competitors && report.competitors.competitors.length > 0) {
+      var cs=document.getElementById('competitorsSection'); cs.style.display='block';
+      var sublabel = 'Top businesses ranking for \u201c'+escapeHtml(report.businessType)+'\u201d in your area';
+      document.getElementById('competitorsSublabel').textContent=sublabel;
+      var cr=document.getElementById('competitorsRow'); cr.innerHTML='';
+      report.competitors.competitors.forEach(function(comp) {
+        var card=document.createElement('a');
+        card.className='competitor-card';
+        if (comp.mapsUrl) { card.href=comp.mapsUrl; card.target='_blank'; card.rel='noopener'; }
+        card.innerHTML='<div class="competitor-name" title="'+escapeHtml(comp.name)+'">'+escapeHtml(comp.name)+'</div>'
+          +'<div class="competitor-rating"><span class="competitor-star">\u2605</span> '+comp.rating.toFixed(1)
+          +' <span class="competitor-reviews">('+comp.reviewCount.toLocaleString()+')</span></div>';
+        cr.appendChild(card);
       });
     }
 

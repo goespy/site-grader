@@ -5,20 +5,22 @@ Free website grader for home service businesses. Scores sites on how well they c
 - **Frontend:** Static HTML/CSS/JS on Cloudflare Pages
 - **Backend:** Cloudflare Worker (TypeScript) at `worker/`
 - **Storage:** Cloudflare KV (reports with 30-day TTL)
-- **APIs:** Google PageSpeed Insights v5, Resend (lead emails)
+- **APIs:** Google PageSpeed Insights v5, Resend (lead emails), OpenRouter (AI content review via MiniMax-M2.5), Google Places (New) API (competitor analysis)
 - **Design:** Dark SaaS aesthetic (#0B0F1A bg, #3B82F6 blue primary, #F97316 orange accent), Outfit + Inter fonts, ambient glow orbs, glassmorphism cards
 
 ## How It Works
 
 1. User enters URL + business type + optional ad spend
 2. Worker fetches page HTML + calls PageSpeed API in parallel
-3. Six analyzers score the site (0-100 each, weighted):
-   - Mobile Experience (25%) — load time, responsive, tap targets
-   - Lead Capture (25%) — phone, click-to-call, forms, CTAs
+3. Seven analyzers score the site (0-100 each, weighted):
+   - Mobile Experience (20%) — load time, responsive, tap targets
+   - Lead Capture (20%) — phone, click-to-call, forms, CTAs
    - Trust & Credibility (15%) — testimonials, reviews, license
    - Page Speed (15%) — Core Web Vitals, page weight
    - SEO Basics (10%) — title, meta, H1, SSL, schema
    - Ad Landing Readiness (10%) — service/location above fold, distraction score
+   - Content Quality (10%) — AI-powered review of copy persuasiveness, messaging clarity, CTAs (via MiniMax-M2.5 on OpenRouter; gracefully skipped if unavailable)
+   Competitor search also runs in parallel (Google Places Text Search) — returns top 5 nearby competitors with ratings/reviews. Not a scoring category, just market context.
 4. Scoring engine computes overall grade (A+ through F) + wasted ad spend estimate
 5. Report stored in KV, returned with shareable URL
 6. Lead capture form sends email via Resend
@@ -58,7 +60,9 @@ site-grader/
 │   │   │   ├── trust.ts         # Trust & credibility scoring
 │   │   │   ├── speed.ts         # Page speed scoring
 │   │   │   ├── seo.ts           # SEO basics scoring
-│   │   │   └── ad-readiness.ts  # Ad landing readiness scoring
+│   │   │   ├── ad-readiness.ts  # Ad landing readiness scoring
+│   │   │   ├── ai-review.ts    # AI content quality review (OpenRouter/MiniMax-M2.5)
+│   │   │   └── competitors.ts  # Competitor analysis via Google Places API (not a scoring category)
 │   │   ├── analytics.ts    # KV-based aggregate counters (scans, leads)
 │   │   ├── scoring.ts      # Category weights, letter grades, wasted spend
 │   │   └── verdicts.ts     # Plain English verdict templates
@@ -84,6 +88,8 @@ site-grader/
 | `RESEND_API_KEY` | Resend API key for lead notification emails |
 | `LEAD_EMAIL_TO` | Email address that receives lead notifications |
 | `STATS_TOKEN` | Bearer token for `/api/stats` endpoint |
+| `OPENROUTER_API_KEY` | OpenRouter API key for AI content review (optional — AI category skipped if missing) |
+| `GOOGLE_PLACES_API_KEY` | Google Places API key for competitor analysis (optional — competitor section hidden if missing) |
 
 KV namespace `REPORTS` is bound in `wrangler.toml`.
 
@@ -91,7 +97,7 @@ KV namespace `REPORTS` is bound in `wrangler.toml`.
 
 - Each analyzer returns findings with `impact: 'high' | 'medium' | 'low'`
 - Finding weights: high=30, medium=20, low=10. Category score = earned/total * 100
-- Overall score = weighted sum of 6 categories (weights in `scoring.ts`)
+- Overall score = weighted sum of 7 categories (weights in `scoring.ts`); if AI review fails, its weight is redistributed
 - Grade thresholds: A+ (97+) → F (below 60)
 - Grade colors: A=green #22C55E, B=blue #3B82F6, C=yellow #EAB308, D=orange #F97316, F=red #EF4444
 - Wasted spend: `(100 - score) / 100 * 0.7 * monthlyAdSpend`, shown as low-high range
@@ -127,7 +133,7 @@ Dark premium SaaS aesthetic (Vercel/Linear-inspired). Feels like a pro developer
 - Historical tracking or re-scans
 - Competitor side-by-side comparison
 - Leaderboard
-- AI/LLM-powered recommendations
+- ~~AI/LLM-powered recommendations~~ (added in v1.1 — Content Quality category via MiniMax-M2.5)
 - Blog/content pages
 - Multiple page crawling (v1 = homepage only)
 

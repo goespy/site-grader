@@ -9,6 +9,8 @@ export interface Env {
   RESEND_API_KEY: string;
   LEAD_EMAIL_TO: string;
   STATS_TOKEN: string;
+  OPENROUTER_API_KEY: string;
+  GOOGLE_PLACES_API_KEY?: string;
 }
 
 const ALLOWED_ORIGINS = [

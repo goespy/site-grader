@@ -69,12 +69,13 @@ export function gradeColor(grade: string): string {
 /* ------------------------------------------------------------------ */
 
 const CATEGORY_WEIGHTS: Record<string, number> = {
-  'Mobile Experience':     0.25,
-  'Lead Capture':          0.25,
+  'Mobile Experience':     0.20,
+  'Lead Capture':          0.20,
   'Trust & Credibility':   0.15,
   'Page Speed':            0.15,
   'SEO Basics':            0.10,
   'Ad Landing Readiness':  0.10,
+  'Content Quality':       0.10,
 };
 
 /* ------------------------------------------------------------------ */
