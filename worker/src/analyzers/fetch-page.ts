@@ -131,14 +131,60 @@ function countNavLinks(html: string): number {
 }
 
 // ---------------------------------------------------------------------------
+// SSRF protection
+// ---------------------------------------------------------------------------
+
+/** Block requests to private/reserved IP ranges and non-HTTP schemes. */
+function validateUrl(raw: string): string {
+  if (!/^https?:\/\//i.test(raw)) {
+    raw = `https://${raw}`;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new Error('Invalid URL');
+  }
+
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error('Only HTTP(S) URLs are allowed');
+  }
+
+  const hostname = parsed.hostname;
+
+  // Block IP-based hostnames that target private/reserved ranges
+  const BLOCKED_PATTERNS = [
+    /^127\./,                          // loopback
+    /^10\./,                           // private class A
+    /^172\.(1[6-9]|2\d|3[01])\./,     // private class B
+    /^192\.168\./,                     // private class C
+    /^169\.254\./,                     // link-local / cloud metadata
+    /^0\./,                            // "this" network
+    /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, // CGNAT
+    /^\[?::1\]?$/,                     // IPv6 loopback
+    /^\[?fe80:/i,                      // IPv6 link-local
+    /^\[?fc/i,                         // IPv6 unique local
+    /^\[?fd/i,                         // IPv6 unique local
+    /^localhost$/i,
+  ];
+
+  for (const pattern of BLOCKED_PATTERNS) {
+    if (pattern.test(hostname)) {
+      throw new Error('URL targets a private or reserved address');
+    }
+  }
+
+  return parsed.href;
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
 export async function fetchAndParse(url: string): Promise<ParsedPage> {
-  // Normalise the URL
-  if (!/^https?:\/\//i.test(url)) {
-    url = `https://${url}`;
-  }
+  // Normalise and validate the URL (blocks private IPs, non-HTTP schemes)
+  url = validateUrl(url);
 
   const response = await fetch(url, {
     redirect: 'follow',

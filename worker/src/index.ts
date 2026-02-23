@@ -3,6 +3,37 @@ import { handleReport } from './routes/report';
 import { handleLead } from './routes/lead';
 import { handleStats } from './routes/stats';
 
+// ---------------------------------------------------------------------------
+// Rate limiting (KV-based, works across isolates)
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns true if the request should be blocked.
+ * Uses KV with short TTL as a counter. KV is eventually consistent,
+ * so this isn't perfectly precise — but it stops sustained abuse.
+ */
+async function isRateLimited(
+  kv: KVNamespace,
+  key: string,
+  maxRequests: number,
+  windowSec: number,
+): Promise<boolean> {
+  const kvKey = `ratelimit:${key}`;
+  try {
+    const raw = await kv.get(kvKey);
+    const count = raw ? parseInt(raw, 10) : 0;
+
+    if (count >= maxRequests) return true;
+
+    // Increment. If first request, set with TTL. Otherwise overwrite (TTL preserved on first write).
+    await kv.put(kvKey, String(count + 1), { expirationTtl: windowSec });
+    return false;
+  } catch {
+    // If KV fails, allow the request rather than blocking legitimate users
+    return false;
+  }
+}
+
 export interface Env {
   REPORTS: KVNamespace;
   PAGESPEED_API_KEY: string;
@@ -40,16 +71,26 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
+    const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+
     let response: Response;
 
     try {
       if (url.pathname === '/api/scan' && request.method === 'POST') {
-        response = await handleScan(request, env, ctx);
+        if (await isRateLimited(env.REPORTS, `scan:${clientIp}`, 5, 60)) {
+          response = Response.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
+        } else {
+          response = await handleScan(request, env, ctx);
+        }
       } else if (url.pathname.startsWith('/api/report/') && request.method === 'GET') {
         const id = url.pathname.replace('/api/report/', '');
         response = await handleReport(id, env);
       } else if (url.pathname === '/api/lead' && request.method === 'POST') {
-        response = await handleLead(request, env, ctx);
+        if (await isRateLimited(env.REPORTS, `lead:${clientIp}`, 3, 60)) {
+          response = Response.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
+        } else {
+          response = await handleLead(request, env, ctx);
+        }
       } else if (url.pathname === '/api/stats' && request.method === 'GET') {
         response = await handleStats(request, env);
       } else {

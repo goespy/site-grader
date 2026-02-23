@@ -93,6 +93,8 @@ export async function handleLead(request: Request, env: Env, ctx: ExecutionConte
   ].join('\n');
 
   const subjectGrade = report ? report.overallGrade : 'N/A';
+  // Strip newlines to prevent header injection, truncate to reasonable length
+  const safeName = name.replace(/[\r\n]/g, '').slice(0, 100);
 
   try {
     const emailResponse = await fetch('https://api.resend.com/emails', {
@@ -104,7 +106,7 @@ export async function handleLead(request: Request, env: Env, ctx: ExecutionConte
       body: JSON.stringify({
         from: 'SiteGrade <noreply@updates.sitegrade.pro>',
         to: env.LEAD_EMAIL_TO,
-        subject: `New Lead: ${name} — Grade ${subjectGrade}`,
+        subject: `New Lead: ${safeName} — Grade ${subjectGrade}`,
         html,
       }),
     });

@@ -13,6 +13,31 @@ import { gradeReport } from '../scoring';
 import { overallVerdict, wastedSpendVerdict } from '../verdicts';
 import { recordScan } from '../analytics';
 
+// ---------------------------------------------------------------------------
+// Input validation allowlists (must match frontend dropdowns)
+// ---------------------------------------------------------------------------
+
+const VALID_BUSINESS_TYPES = new Set([
+  'Pool Builder',
+  'HVAC',
+  'Roofing',
+  'Plumbing',
+  'Electrical',
+  'Landscaping',
+  'Painting',
+  'General Contractor',
+  'Other',
+]);
+
+const VALID_AD_SPENDS = new Set([
+  'none',
+  'under500',
+  '500-1000',
+  '1000-2500',
+  '2500-5000',
+  '5000+',
+]);
+
 export async function handleScan(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   try {
     // 1. Parse JSON body
@@ -28,6 +53,21 @@ export async function handleScan(request: Request, env: Env, ctx: ExecutionConte
     if (!url || !businessType) {
       return Response.json(
         { error: 'Missing required fields: url and businessType are required.' },
+        { status: 400 },
+      );
+    }
+
+    // 3. Validate against allowlists
+    if (!VALID_BUSINESS_TYPES.has(businessType)) {
+      return Response.json(
+        { error: 'Invalid business type.' },
+        { status: 400 },
+      );
+    }
+
+    if (adSpend && !VALID_AD_SPENDS.has(adSpend)) {
+      return Response.json(
+        { error: 'Invalid ad spend value.' },
         { status: 400 },
       );
     }
