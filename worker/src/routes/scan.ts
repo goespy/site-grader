@@ -142,8 +142,12 @@ export async function handleScan(request: Request, env: Env, ctx: ExecutionConte
     // 13. Return the report
     return Response.json(storedReport);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('Scan failed:', err);
+    // Return a generic message to avoid leaking internal details.
+    // Common user-facing errors (bad URL, private IP) are caught above.
+    const message = err instanceof Error && err.message.startsWith('URL ')
+      ? err.message  // safe: comes from our own validateUrl()
+      : 'Something went wrong. Please check the URL and try again.';
     return Response.json(
       { error: `Scan failed: ${message}` },
       { status: 500 },

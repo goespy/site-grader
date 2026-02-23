@@ -1,8 +1,8 @@
 import type { Env } from '../index';
 
 export async function handleReport(id: string, env: Env): Promise<Response> {
-  // 1. Validate id
-  if (!id || id.length < 8) {
+  // 1. Validate id format (UUID prefix: hex + hyphens, 11-12 chars)
+  if (!id || !/^[a-f0-9-]{8,12}$/.test(id)) {
     return Response.json(
       { error: 'Invalid report ID.' },
       { status: 400 },

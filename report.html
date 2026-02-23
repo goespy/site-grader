@@ -880,7 +880,8 @@ a { text-decoration: none; color: inherit; }
     var grid = document.getElementById('categoriesGrid'); grid.innerHTML = '';
     if (report.categories && report.categories.length > 0) {
       report.categories.forEach(function(cat, ci) {
-        var color = cat.gradeColor || gradeColorFromGrade(cat.grade);
+        var rawColor = cat.gradeColor || gradeColorFromGrade(cat.grade);
+        var color = /^#[0-9a-f]{6}$/i.test(rawColor) ? rawColor : gradeColorFromGrade(cat.grade);
         var sf = (cat.findings||[]).slice().sort(function(a,b){ return a.pass===b.pass?0:a.pass?1:-1; });
         var sum = (sf.find(function(f){return !f.pass;})||sf[0]);
         var st = sum ? sum.detail : '';
@@ -889,7 +890,7 @@ a { text-decoration: none; color: inherit; }
           fh += '<div class="finding-item"><div class="finding-icon '+(f.pass?'pass':'fail')+'">'+(f.pass?'\u2713':'\u2717')+'</div><div><div class="finding-label">'+escapeHtml(f.label)+'</div><div class="finding-detail">'+escapeHtml(f.detail)+'</div></div></div>';
         });
         var card = document.createElement('div'); card.className='category-card';
-        card.innerHTML = '<div class="category-header"><div class="category-name">'+escapeHtml(cat.name)+'</div><div class="category-grade-badge" style="background:'+color+'">'+escapeHtml(cat.grade)+'</div></div><div class="category-score-bar-track"><div class="category-score-bar-fill" style="width:0%;background:'+color+'" data-width="'+cat.score+'"></div></div><div class="category-summary">'+escapeHtml(st)+'</div><button class="category-toggle" data-cat="'+ci+'">Show details <span class="category-toggle-arrow">\u25BC</span></button><div class="category-findings" id="findings-'+ci+'"><div class="findings-list">'+fh+'</div></div>';
+        card.innerHTML = '<div class="category-header"><div class="category-name">'+escapeHtml(cat.name)+'</div><div class="category-grade-badge" style="background:'+color+'">'+escapeHtml(cat.grade)+'</div></div><div class="category-score-bar-track"><div class="category-score-bar-fill" style="width:0%;background:'+color+'" data-width="'+Number(cat.score)+'"></div></div><div class="category-summary">'+escapeHtml(st)+'</div><button class="category-toggle" data-cat="'+ci+'">Show details <span class="category-toggle-arrow">\u25BC</span></button><div class="category-findings" id="findings-'+ci+'"><div class="findings-list">'+fh+'</div></div>';
         grid.appendChild(card);
       });
       requestAnimationFrame(function(){ grid.querySelectorAll('.category-score-bar-fill').forEach(function(f){ f.style.width=f.getAttribute('data-width')+'%'; }); });
@@ -921,7 +922,8 @@ a { text-decoration: none; color: inherit; }
     if (report.priorityFixes && report.priorityFixes.length > 0) {
       fs.style.display='block';
       report.priorityFixes.forEach(function(fix,i){
-        var el=fix.effort||'medium';
+        var rawEffort=fix.effort||'medium';
+        var el=({'quick':'quick','medium':'medium','involved':'involved'})[rawEffort]||'medium';
         var it=document.createElement('div'); it.className='fix-item';
         it.innerHTML='<div class="fix-number">'+(i+1)+'</div><div class="fix-content"><div class="fix-top-row"><span class="fix-label">'+escapeHtml(fix.label)+'</span><span class="effort-badge '+el+'">'+el+'</span></div><div class="fix-detail">'+escapeHtml(fix.detail)+'</div></div>';
         fl.appendChild(it);

@@ -1,10 +1,19 @@
 import type { Env } from '../index';
 import { getStats } from '../analytics';
 
+/** Constant-time string comparison to prevent timing attacks. */
+function timingSafeCompare(a: string, b: string): boolean {
+  const encoder = new TextEncoder();
+  const aBuf = encoder.encode(a);
+  const bBuf = encoder.encode(b);
+  if (aBuf.byteLength !== bBuf.byteLength) return false;
+  return crypto.subtle.timingSafeEqual(aBuf, bBuf);
+}
+
 export async function handleStats(request: Request, env: Env): Promise<Response> {
-  // Auth check
-  const auth = request.headers.get('Authorization');
-  if (!env.STATS_TOKEN || auth !== `Bearer ${env.STATS_TOKEN}`) {
+  // Auth check (timing-safe)
+  const auth = request.headers.get('Authorization') || '';
+  if (!env.STATS_TOKEN || !timingSafeCompare(auth, `Bearer ${env.STATS_TOKEN}`)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
